@@ -1,0 +1,173 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
+use App\Actions\Threads\DestroyGroupAvatar;
+use App\Actions\Threads\LeaveThread;
+use App\Actions\Threads\StoreGroupAvatar;
+use App\Actions\Threads\StoreGroupThread;
+use App\Actions\Threads\UpdateGroupSettings;
+use App\Exceptions\FeatureDisabledException;
+use App\Http\Collections\GroupThreadCollection;
+use App\Http\Request\GroupAvatarRequest;
+use App\Http\Request\GroupThreadRequest;
+use App\Http\Request\ThreadSettingsRequest;
+use App\Http\Resources\ThreadResource;
+use App\Http\Resources\ThreadSettingsResource;
+use App\Models\Thread;
+use App\Repositories\GroupThreadRepository;
+use Throwable;
+
+class GroupThreadController
+{
+    use AuthorizesRequests;
+
+    /**
+     * Display a listing of the most recent group threads.
+     *
+     * @param  GroupThreadRepository  $repository
+     * @return GroupThreadCollection
+     *
+     * @throws AuthorizationException
+     */
+    public function index(GroupThreadRepository $repository): GroupThreadCollection
+    {
+        $this->authorize('viewAny', Thread::class);
+
+        return new GroupThreadCollection(
+            $repository->getProviderGroupThreadsIndex()
+        );
+    }
+
+    /**
+     * Display group threads history pagination.
+     *
+     * @param  GroupThreadRepository  $repository
+     * @param  Thread  $group
+     * @return GroupThreadCollection
+     *
+     * @throws AuthorizationException
+     */
+    public function paginate(GroupThreadRepository $repository, Thread $group): GroupThreadCollection
+    {
+        $this->authorize('groupMethod', $group);
+
+        return new GroupThreadCollection(
+            $repository->getProviderGroupThreadsPage($group),
+            true,
+            $group->id
+        );
+    }
+
+    /**
+     * Display group thread settings.
+     *
+     * @param  Thread  $thread
+     * @return ThreadSettingsResource
+     *
+     * @throws AuthorizationException
+     */
+    public function settings(Thread $thread): ThreadSettingsResource
+    {
+        $this->authorize('settings', $thread);
+
+        return new ThreadSettingsResource($thread);
+    }
+
+    /**
+     * Update the group settings.
+     *
+     * @param  ThreadSettingsRequest  $request
+     * @param  UpdateGroupSettings  $updateGroupSettings
+     * @param  Thread  $thread
+     * @return ThreadSettingsResource
+     *
+     * @throws AuthorizationException
+     */
+    public function updateSettings(ThreadSettingsRequest $request,
+                                   UpdateGroupSettings $updateGroupSettings,
+                                   Thread $thread): ThreadSettingsResource
+    {
+        $this->authorize('settings', $thread);
+
+        return $updateGroupSettings->execute(
+            $thread,
+            $request->validated()
+        )->getJsonResource();
+    }
+
+    /**
+     * Store the group avatar.
+     *
+     * @param  GroupAvatarRequest  $request
+     * @param  StoreGroupAvatar  $storeGroupAvatar
+     * @param  Thread  $thread
+     * @return ThreadSettingsResource
+     *
+     * @throws FeatureDisabledException|AuthorizationException|Throwable
+     */
+    public function storeAvatar(GroupAvatarRequest $request,
+                                StoreGroupAvatar $storeGroupAvatar,
+                                Thread $thread): ThreadSettingsResource
+    {
+        $this->authorize('settings', $thread);
+
+        return $storeGroupAvatar->execute(
+            $thread,
+            $request->validated()['image']
+        )->getJsonResource();
+    }
+
+    /**
+     * Remove the group avatar.
+     *
+     * @param  DestroyGroupAvatar  $destroyGroupAvatar
+     * @param  Thread  $thread
+     * @return JsonResponse
+     *
+     * @throws AuthorizationException|FeatureDisabledException
+     */
+    public function destroyAvatar(DestroyGroupAvatar $destroyGroupAvatar, Thread $thread): JsonResponse
+    {
+        $this->authorize('settings', $thread);
+
+        return $destroyGroupAvatar->execute($thread)->getEmptyResponse();
+    }
+
+    /**
+     * Store a new group thread.
+     *
+     * @param  GroupThreadRequest  $request
+     * @param  StoreGroupThread  $storeGroupThread
+     * @return ThreadResource
+     *
+     * @throws Throwable
+     */
+    public function store(GroupThreadRequest $request, StoreGroupThread $storeGroupThread): ThreadResource
+    {
+        $this->authorize('create', Thread::class);
+
+        return $storeGroupThread->execute(
+            $request->validated()
+        )->getJsonResource();
+    }
+
+    /**
+     * Leave a group thread.
+     *
+     * @param  LeaveThread  $leaveThread
+     * @param  Thread  $thread
+     * @return JsonResponse
+     *
+     * @throws AuthorizationException|Throwable
+     */
+    public function leave(LeaveThread $leaveThread, Thread $thread): JsonResponse
+    {
+        $this->authorize('leave', $thread);
+
+        return $leaveThread->execute($thread)->getSuccessResponse();
+    }
+}
