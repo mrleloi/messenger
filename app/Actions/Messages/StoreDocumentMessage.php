@@ -69,21 +69,33 @@ class StoreDocumentMessage extends NewMessageAction
                             array $params,
                             ?string $senderIp = null): self
     {
-        $this->bailIfDisabled();
+        try {
+            $this->bailIfDisabled();
 
-        $this->setThread($thread);
+            $this->setThread($thread);
 
-        $document = $this->upload($params['document']);
+            $document = $this->upload($params['document']);
+            $params['messageType'] = Message::DOCUMENT_MESSAGE;
+            $params['messageBody'] = $document;
 
-        $this->setMessageType(Message::DOCUMENT_MESSAGE)
-            ->setMessageBody($document)
-            ->setMessageOptionalParameters($params)
-            ->setMessageOwner($this->messenger->getProvider())
-            ->setSenderIp($senderIp);
+            $this->setMessageType(Message::DOCUMENT_MESSAGE)
+                ->setMessageBody($document)
+                ->setMessageOptionalParameters($params)
+                ->setMessageOwner($this->messenger->getProvider())
+                ->setSenderIp($senderIp)
+                ->storeTempMessage()
+                ->generateResource();
 
-        $this->handleOrRollback($document);
-
-        $this->finalize();
+            unset($params['document']);
+            $this->fireEvents($thread, $params, $senderIp, $this->messenger->getProvider());
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
+            var_dump($e);
+            $this->fileService
+                ->setDisk($this->getThread()->getStorageDisk())
+                ->destroy("{$this->getThread()->getImagesDirectory()}/$document");
+            throw $e;
+        }
 
         return $this;
     }

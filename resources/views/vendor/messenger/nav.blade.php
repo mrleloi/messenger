@@ -1,4 +1,4 @@
-<ul class="navbar-nav mr-auto">
+<!--<ul class="navbar-nav mr-auto">
     <li class="nav-item" >
         <a class="nav-link" target="_blank" href="https://github.com/RTippin/messenger">Github <i class="fab fa-github"></i></a>
     </li>
@@ -12,7 +12,8 @@
         <a class="nav-link" href="">Documentation <i class="fab fa-readme"></i></a>
     </li>
 </ul>
-<ul class="navbar-nav mb-1">
+-->
+<ul class="navbar-nav mb-1 ml-auto">
     <li id="active_calls_nav" class="nav-item dropdown mx-1 my-2 my-lg-0">
         <a id="active_calls_link" href="#" class="dropdown-toggle nav-link pt-1 pb-0" data-toggle="dropdown" role="button" aria-expanded="false">
             <i id="active_call_nav_icon" class="fas fa-video fa-2x"></i>

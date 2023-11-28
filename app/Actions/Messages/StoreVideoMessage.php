@@ -69,21 +69,33 @@ class StoreVideoMessage extends NewMessageAction
                             array $params,
                             ?string $senderIp = null): self
     {
-        $this->bailIfDisabled();
+        try {
+            $this->bailIfDisabled();
 
-        $this->setThread($thread);
+            $this->setThread($thread);
 
-        $video = $this->upload($params['video']);
+            $video = $this->upload($params['video']);
+            $params['messageType'] = Message::DOCUMENT_MESSAGE;
+            $params['messageBody'] = $video;
 
-        $this->setMessageType(Message::VIDEO_MESSAGE)
-            ->setMessageBody($video)
-            ->setMessageOptionalParameters($params)
-            ->setMessageOwner($this->messenger->getProvider())
-            ->setSenderIp($senderIp);
+            $this->setMessageType(Message::VIDEO_MESSAGE)
+                ->setMessageBody($video)
+                ->setMessageOptionalParameters($params)
+                ->setMessageOwner($this->messenger->getProvider())
+                ->setSenderIp($senderIp)
+                ->storeTempMessage()
+                ->generateResource();
 
-        $this->handleOrRollback($video);
-
-        $this->finalize();
+            unset($params['video']);
+            $this->fireEvents($thread, $params, $senderIp, $this->messenger->getProvider());
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
+            var_dump($e);
+            $this->fileService
+                ->setDisk($this->getThread()->getStorageDisk())
+                ->destroy("{$this->getThread()->getImagesDirectory()}/$document");
+            throw $e;
+        }
 
         return $this;
     }

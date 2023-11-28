@@ -69,21 +69,33 @@ class StoreAudioMessage extends NewMessageAction
                             array $params,
                             ?string $senderIp = null): self
     {
-        $this->bailIfDisabled();
+        try {
+            $this->bailIfDisabled();
 
-        $this->setThread($thread);
+            $this->setThread($thread);
 
-        $audio = $this->upload($params['audio']);
+            $audio = $this->upload($params['audio']);
+            $params['messageType'] = Message::AUDIO_MESSAGE;
+            $params['messageBody'] = $audio;
 
-        $this->setMessageType(Message::AUDIO_MESSAGE)
-            ->setMessageBody($audio)
-            ->setMessageOptionalParameters($params)
-            ->setMessageOwner($this->messenger->getProvider())
-            ->setSenderIp($senderIp);
+            $this->setMessageType(Message::AUDIO_MESSAGE)
+                ->setMessageBody($audio)
+                ->setMessageOptionalParameters($params)
+                ->setMessageOwner($this->messenger->getProvider())
+                ->setSenderIp($senderIp)
+                ->storeTempMessage()
+                ->generateResource();
 
-        $this->handleOrRollback($audio);
-
-        $this->finalize();
+            unset($params['audio']);
+            $this->fireEvents($thread, $params, $senderIp, $this->messenger->getProvider());
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
+            var_dump($e);
+            $this->fileService
+                ->setDisk($this->getThread()->getStorageDisk())
+                ->destroy("{$this->getThread()->getImagesDirectory()}/$audio");
+            throw $e;
+        }
 
         return $this;
     }

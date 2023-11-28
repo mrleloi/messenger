@@ -54,20 +54,50 @@ class SetupNewMessageAction extends NewMessageAction
 
     public function execute(NewMessageEvent $event): self
     {
-        $thread = $event->thread;
-        $params = $event->params;
-        $senderIp = $event->senderIp;
-        $provider = $event->provider;
+        try {
+            $thread = $event->thread;
+            $params = $event->params;
+            $senderIp = $event->senderIp;
+            $provider = $event->provider;
 
-        $this->setThread($thread)
-            ->setMessageType(Message::MESSAGE)
-            ->setMessageBody($this->emoji->toShort($params['message']) ?: null)
-            ->setMessageOptionalParameters($params)
-            ->setMessageOwner($provider)
-            ->setSenderIp($senderIp)
-            ->process()
-            ->generateResource()
-            ->fireBroadcast();
+            $messageType = Message::MESSAGE;
+            if (isset($params['message'])) {
+                $messageBody = $this->emoji->toShort($params['message']) ?: null;
+            }
+
+            if (isset($params['messageType']))  {
+                if ($params['messageType'] == Message::IMAGE_MESSAGE) {
+                    $messageType = Message::IMAGE_MESSAGE;
+                    $messageBody = $params['messageBody'];
+                } else if ($params['messageType'] == Message::DOCUMENT_MESSAGE) {
+                    $messageType = Message::DOCUMENT_MESSAGE;
+                    $messageBody = $params['messageBody'];
+                } else if ($params['messageType'] == Message::AUDIO_MESSAGE) {
+                    $messageType = Message::AUDIO_MESSAGE;
+                    $messageBody = $params['messageBody'];
+                } else if ($params['messageType'] == Message::VIDEO_MESSAGE) {
+                    $messageType = Message::VIDEO_MESSAGE;
+                    $messageBody = $params['messageBody'];
+                }
+            }
+
+            $this->setThread($thread)
+                ->setMessageType($messageType)
+                ->setMessageBody($messageBody)
+                ->setMessageOptionalParameters($params)
+                ->setMessageOwner($provider)
+                ->setSenderIp($senderIp)
+                ->process()
+                ->generateResource()
+                ->fireBroadcast();
+        } catch (Exception $e) {
+            var_dump($e->getMessage());
+            var_dump($e);
+            $this->fileService
+                ->setDisk($this->getThread()->getStorageDisk())
+                ->destroy("{$this->getThread()->getImagesDirectory()}/$image");
+            throw $e;
+        }
 
         return $this;
     }

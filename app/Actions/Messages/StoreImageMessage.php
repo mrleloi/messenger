@@ -69,21 +69,33 @@ class StoreImageMessage extends NewMessageAction
                             array $params,
                             ?string $senderIp = null): self
     {
-        $this->bailIfDisabled();
+        try {
+            $this->bailIfDisabled();
 
-        $this->setThread($thread);
+            $this->setThread($thread);
 
-        $image = $this->upload($params['image']);
+            $image = $this->upload($params['image']);
+            $params['messageType'] = Message::IMAGE_MESSAGE;
+            $params['messageBody'] = $image;
 
-        $this->setMessageType(Message::IMAGE_MESSAGE)
-            ->setMessageBody($image)
-            ->setMessageOptionalParameters($params)
-            ->setMessageOwner($this->messenger->getProvider())
-            ->setSenderIp($senderIp);
+            $this->setMessageType(Message::IMAGE_MESSAGE)
+                ->setMessageBody($image)
+                ->setMessageOptionalParameters($params)
+                ->setMessageOwner($this->messenger->getProvider())
+                ->setSenderIp($senderIp)
+                ->storeTempMessage()
+                ->generateResource();
 
-        $this->handleOrRollback($image);
-
-        $this->finalize();
+            unset($params['image']);
+            $this->fireEvents($thread, $params, $senderIp, $this->messenger->getProvider());
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
+            var_dump($e);
+            $this->fileService
+                ->setDisk($this->getThread()->getStorageDisk())
+                ->destroy("{$this->getThread()->getImagesDirectory()}/$image");
+            throw $e;
+        }
 
         return $this;
     }
