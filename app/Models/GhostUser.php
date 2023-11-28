@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Messenger;
-use RTippin\Messenger\Support\Helpers;
+use App\Contracts\MessengerProvider;
+use App\Messenger;
+use App\Support\Helpers;
 
 class GhostUser extends Model
 {

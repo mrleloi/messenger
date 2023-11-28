@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use RTippin\Messenger\Facades\Messenger;
@@ -56,28 +57,38 @@ class LoginController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:employee',
-            'password' => 'required|min:8',
             'type' => 'required',
+            'token' => 'required',
         ]);
 
         if ($validator->fails()) {
             return back()->withError(implode("<br>", $validator->errors()->all()));
         }
 
-        $remember_me = $request->has('remember_me') ? true : false;
-        $credentials = $request->only('email', 'password');
+//        $remember_me = $request->has('remember_me') ? true : false;
+//        $credentials = $request->only('email', 'password');
 
         $guard = 'web';
         $type = $request->get('type');
         if ($type == 'admin') $guard = 'admin';
         else if ($type == 'employee') $guard = 'employee';
 
-        if (auth($guard)->attempt($credentials, $remember_me)) {
+        $accessToken = DB::table('personal_access_tokens')
+            ->where('tokenable_type', '=', $guard)
+            ->where('token', '=', $request->token)
+            ->first();
+        if (!$accessToken ||
+            ($accessToken->expires_at &&
+                now()->greaterThan(Carbon::parse($accessToken->expired_at)))) {
+            return back()->withError(__('messages_employee.access_token_invalid'));
+        }
+
+        if (auth($guard)->loginUsingId($accessToken->tokenable_id)) {
+//        if (auth($guard)->attempt($credentials, $remember_me)) {
             $user = auth($guard)->user();
             if (auth($guard)->check() && $user->verify_at && $user->status->value === 1) {
-                $token = $user->createToken($request->email . '-' . now())->plainTextToken;
-                Session::put('employee_access_token', $token);
+//                $token = $user->createToken($request->email . '-' . now())->plainTextToken;
+//                Session::put('employee_access_token', $token);
                 return redirect()->route('home')->withSuccess(__('messages_employee.login_email_success'));
             } else {
                 return back()->withError(__('messages_employee.login_email_err'));
@@ -101,8 +112,13 @@ class LoginController extends Controller
 
         $this->guard()->logout();
 
-        $request->session()->invalidate();
+        /*foreach ($request->session()->all() as $key => $value) {
+            if (strpos($key, \messenger()->getProviderAlias(). '_') === 0) {
+                Session::forget($key);
+            }
+        }*/
 
+        $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         if ($response = $this->loggedOut($request)) {

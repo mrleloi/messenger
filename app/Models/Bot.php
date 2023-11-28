@@ -12,15 +12,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Contracts\Ownerable;
-use RTippin\Messenger\Database\Factories\BotFactory;
-use RTippin\Messenger\Facades\Messenger as MessengerFacade;
-use RTippin\Messenger\Facades\MessengerBots;
-use RTippin\Messenger\Messenger;
-use RTippin\Messenger\Support\Helpers;
-use RTippin\Messenger\Traits\HasOwner;
-use RTippin\Messenger\Traits\ScopesProvider;
+use App\Contracts\MessengerProvider;
+use App\Contracts\Ownerable;
+use App\Database\Factories\BotFactory;
+use App\Facades\Messenger as MessengerFacade;
+use App\Facades\MessengerBots;
+use App\Messenger;
+use App\Support\Helpers;
+use App\Traits\HasOwner;
+use App\Traits\ScopesProvider;
 
 /**
  * @mixin Model|\Eloquent

@@ -40,8 +40,12 @@ class CallBrokerSetup extends BaseMessengerAction
             ->setCall($call)
             ->checkCallNeedsToBeSetup();
 
-        if ($this->getCall()->isActive()) {
-            $this->setupCallWithProvider()->updateCall();
+        try {
+            if ($this->getCall()->isActive()) {
+                $this->setupCallWithProvider()->updateCall();
+            }
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
         }
 
         return $this;

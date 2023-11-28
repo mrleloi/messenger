@@ -9,12 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
-use RTippin\Messenger\Contracts\Ownerable;
-use RTippin\Messenger\Database\Factories\InviteFactory;
-use RTippin\Messenger\Support\Helpers;
-use RTippin\Messenger\Traits\HasOwner;
-use RTippin\Messenger\Traits\ScopesProvider;
-use RTippin\Messenger\Traits\Uuids;
+use App\Contracts\Ownerable;
+use App\Database\Factories\InviteFactory;
+use App\Support\Helpers;
+use App\Traits\HasOwner;
+use App\Traits\ScopesProvider;
+use App\Traits\Uuids;
 
 /**
  * @mixin Model|\Eloquent

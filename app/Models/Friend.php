@@ -2,21 +2,28 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Laravel\Sanctum\HasApiTokens;
 use App\Facades\Messenger;
+use App\Traits\HasOwner;
+use App\Traits\ScopesProvider;
+use App\Traits\Uuids;
+use App\Database\Factories\FriendFactory;
 
 class Friend extends Model
 {
-    use HasFactory;
+    use HasFactory,
+        HasOwner,
+        ScopesProvider;
 //    , HasApiTokens;
 
     protected $table = 'friends';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id',
         'user1_id',
         'user2_id',
         'user1_model',
@@ -41,6 +48,20 @@ class Friend extends Model
         if ($this->user1_id == $authUserId)
             return $this->user2_id;
         return $this->user1_id;
+    }
+
+    public function getOwnerIdAttribute() {
+        $authUserId = messenger()->getProvider()->getKey();
+        if ($this->user1_id == $authUserId || $this->user2_id == $authUserId)
+            return $authUserId;
+        return null;
+    }
+
+    public function getOwnerTypeAttribute() {
+        $authUserId = messenger()->getProvider()->getKey();
+        if ($this->user1_id == $authUserId || $this->user2_id == $authUserId)
+            return messenger()->getProvider()->getMorphClass();
+        return null;
     }
 
     public function user1()
@@ -68,5 +89,15 @@ class Friend extends Model
                 'friend_id' => $this->id,
             ];
         }
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return Factory
+     */
+    protected static function newFactory(): Factory
+    {
+        return FriendFactory::new();
     }
 }

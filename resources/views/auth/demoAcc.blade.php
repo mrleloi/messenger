@@ -3,12 +3,12 @@
         <table id="search_users_table" class="table table-sm table-hover table-striped">
             <tbody>
             @foreach($users as $key => $item)
-                <tr onclick="demoLogin('{{$item->email}}', '{{$type}}')" class="pointer_area">
+                <tr onclick="demoLogin('{{$item->email}}', '{{$type}}', '{{$item->token}}')" class="pointer_area">
                     <td>
                         <div class="table_links">
                             <div class="nowrap">
                                 <img class="rounded group-image" src="{{asset($item->getProviderAvatarRoute())}}"/>
-                                <span class="h5"><span class="badge badge-light">{{$item->getProviderName()}}</span></span>
+                                <span class="h5"><span class="badge badge-light">{{$item->email}}</span></span>
                             </div>
                         </div>
                     </td>

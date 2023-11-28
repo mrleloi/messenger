@@ -57,6 +57,7 @@ class JanusBroker implements VideoDriver
             );
         } catch (JanusApiException|JanusPluginException $e) {
             report($e);
+            var_dump($e->getMessage());
 
             return false;
         }

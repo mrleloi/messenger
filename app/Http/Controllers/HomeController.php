@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Admin;
 use App\Models\Employee;
 use App\Models\User;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,14 +21,23 @@ class HomeController extends Controller
     public function getDemoAccounts(): JsonResponse
     {
         $employees = Employee::demo()
+            ->leftjoin('personal_access_tokens', function (JoinClause $join) {
+                $join->on('employee.id', '=', 'personal_access_tokens.tokenable_id')
+                    ->where('personal_access_tokens.tokenable_type', '=', 'employee');
+            })
             ->get()
             ->shuffle()
-            ->filter(fn (Employee $user) => $user->getProviderOnlineStatus() === MessengerProvider::OFFLINE)
+//            ->filter(fn (Employee $user) => $user->getProviderOnlineStatus() === MessengerProvider::OFFLINE)
             ->take(5);
+
         $admins = Admin::demo()
+            ->leftjoin('personal_access_tokens', function (JoinClause $join) {
+                $join->on('admin.id', '=', 'personal_access_tokens.tokenable_id')
+                    ->where('personal_access_tokens.tokenable_type', '=', 'admin');
+            })
             ->get()
             ->shuffle()
-            ->filter(fn (Admin $user) => $user->getProviderOnlineStatus() === MessengerProvider::OFFLINE)
+//            ->filter(fn (Admin $user) => $user->getProviderOnlineStatus() === MessengerProvider::OFFLINE)
             ->take(5);
 
         return new JsonResponse([

@@ -10,15 +10,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
-use RTippin\Messenger\Contracts\HasPresenceChannel;
-use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Contracts\Ownerable;
-use RTippin\Messenger\Database\Factories\CallFactory;
-use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Support\Helpers;
-use RTippin\Messenger\Traits\HasOwner;
-use RTippin\Messenger\Traits\ScopesProvider;
-use RTippin\Messenger\Traits\Uuids;
+use App\Contracts\HasPresenceChannel;
+use App\Contracts\MessengerProvider;
+use App\Contracts\Ownerable;
+use App\Database\Factories\CallFactory;
+use App\Facades\Messenger;
+use App\Support\Helpers;
+use App\Traits\HasOwner;
+use App\Traits\ScopesProvider;
+use App\Traits\Uuids;
 
 /**
  * @mixin Model|\Eloquent

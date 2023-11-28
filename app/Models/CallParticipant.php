@@ -9,11 +9,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
-use RTippin\Messenger\Contracts\Ownerable;
-use RTippin\Messenger\Database\Factories\CallParticipantFactory;
-use RTippin\Messenger\Traits\HasOwner;
-use RTippin\Messenger\Traits\ScopesProvider;
-use RTippin\Messenger\Traits\Uuids;
+use App\Contracts\Ownerable;
+use App\Database\Factories\CallParticipantFactory;
+use App\Traits\HasOwner;
+use App\Traits\ScopesProvider;
+use App\Traits\Uuids;
 
 /**
  * @mixin Model|\Eloquent

@@ -31,8 +31,12 @@ class PrivateThreadRepository
      */
     public function getProviderPrivateThreadWithRecipient(MessengerProvider $recipient = null): ?Thread
     {
+        $currentUser = $this->messenger->getProvider();
+        if ($currentUser->getKey() == $recipient->getKey()) {
+            Thread::query()->where('')
+        }
         if ($this->messenger->isValidMessengerProvider($recipient)) {
-            return Thread::hasProvider($this->messenger->getProvider())
+            return Thread::hasProvider($currentUser)
                 ->join('participants as recipients', 'recipients.thread_id', '=', 'threads.id')
                 ->where('recipients.owner_id', '=', $recipient->getKey())
                 ->where('recipients.owner_type', '=', $recipient->getMorphClass())

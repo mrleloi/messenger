@@ -18,7 +18,7 @@
 </div>
 @push('special-js')
     <script>
-        let demoLogin = function(email, type){
+        let demoLogin = function(email, type, token){
             Messenger.alert().Modal({
                 size : 'sm',
                 icon : 'sign-in-alt',
@@ -33,8 +33,7 @@
             Messenger.xhr().payload({
                 route : '/login',
                 data : {
-                    email : email,
-                    password : '12345689',
+                    token: token,
                     type: type
                 },
                 success : function(e){

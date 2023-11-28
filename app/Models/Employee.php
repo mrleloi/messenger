@@ -39,6 +39,7 @@ class Employee extends Authenticatable implements MessengerProvider
      */
     protected $table = 'employee';
     public $model = 'App\Models\Employee';
+
     /**
      * The accessors to append to the model's array form.
      *
