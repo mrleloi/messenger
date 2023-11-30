@@ -1,3 +1,4 @@
+#! bin/sh
 # set timezone to Tokyo
 timedatectl set-timezone Asia/Tokyo
 
