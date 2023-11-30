@@ -57,6 +57,12 @@ CMD ["/usr/bin/supervisord", "-n"]
 RUN groupadd -g 1000 www
 RUN useradd -u 1000 -ms /bin/bash -g www www
 
+# CHMOD files/folders
+sudo chown -R www-data.www-data storage
+sudo chown -R www-data.www-data bootstrap/cache
+sudo chown -R www.www storage
+sudo chown -R www.www bootstrap/cache
+
 # Copy existing application directory contents
 COPY . /var/www
 
