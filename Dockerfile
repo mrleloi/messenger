@@ -1,5 +1,5 @@
 FROM php:8.1-fpm
-#USER jenkins
+USER jenkins
 
 # Copy composer.lock and composer.json
 COPY composer.lock composer.json /var/www/
@@ -17,7 +17,6 @@ RUN apt-get update && apt-get install -y \
     zip \
     jpegoptim optipng pngquant gifsicle \
     vim \
-    redis-server \
     nodejs \
     npm \
     supervisor \
@@ -39,23 +38,15 @@ RUN docker-php-ext-install gd
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+# Add user for laravel application
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -ms /bin/bash -g www www
+
 # Copy existing application directory contents
 COPY . /var/www
 
 # Copy existing application directory permissions
 COPY --chown=www:www . /var/www
-
-# Add user for laravel application
-RUN groupadd -g 1000 www
-RUN useradd -u 1000 -ms /bin/bash -g www www
-
-# CHMOD files/folders
-RUN chown -R www-data:www-data storage
-RUN chown -R www-data:www-data bootstrap/cache
-RUN chown -R www:www storage
-RUN chown -R www:www bootstrap/cache
-RUN chmod -R 777 storage
-RUN chmod -R 777 bootstrap/cache
 
 # Install Supervisor for process control
 RUN mkdir -p /var/log/supervisor
@@ -77,6 +68,10 @@ RUN npm run prod
 
 # Change current user to www
 USER www
+
+# CHMOD files/folders
+RUN chown -R www:www storage
+RUN chown -R www:www bootstrap/cache
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
