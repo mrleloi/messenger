@@ -33,8 +33,6 @@ services:
       - ./:/var/www
       - ./docker-main/nginx/:/etc/nginx/conf.d/
     env_file: .env
-    environment:
-      DB_HOST: localhost
     networks:
       - app-network
 
