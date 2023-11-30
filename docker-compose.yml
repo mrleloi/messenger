@@ -16,7 +16,7 @@ services:
     working_dir: /var/www
     volumes:
       - ./:/var/www
-      - ./vagrant-main/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./docker-main/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - app-network
 
@@ -31,7 +31,7 @@ services:
       - "444:443"
     volumes:
       - ./:/var/www
-      - ./vagrant-main/nginx/:/etc/nginx/conf.d/
+      - ./docker-main/nginx/:/etc/nginx/conf.d/
     networks:
       - app-network
 
@@ -50,7 +50,7 @@ services:
       SERVICE_NAME: mysql
     volumes:
       - dbdata:/var/lib/mysql/
-      - ./vagrant-main/mysql/:/etc/mysql/
+      - ./docker-main/mysql/:/etc/mysql/
     networks:
       - app-network
 
