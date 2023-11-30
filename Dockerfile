@@ -66,6 +66,8 @@ CMD ["/usr/bin/supervisord", "-n"]
 # Run Composer install
 RUN composer update
 
+COPY -f helpers.php /var/www/vendor/rtippin/messenger/src/helpers.php
+
 # Run NPM install
 RUN npm run production
 
