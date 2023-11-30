@@ -44,7 +44,7 @@ services:
     volumes:
       - cache_data:/data
     networks:
-      - app_network
+      - app-network
         
   #MySQL
   # db:
