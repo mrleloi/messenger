@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y \
     vim \
     nodejs \
     npm \
+    redis-server \
     supervisor \
     unzip \
     git \
