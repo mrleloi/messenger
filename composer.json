@@ -68,8 +68,7 @@
             "@php artisan package:discover --ansi"
         ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi",
-            "@php artisan vendor:publish --tag=messenger-ui.assets --force"
+            "@php artisan vendor:publish --tag=laravel-assets --ansi"
         ]
     }
 }
