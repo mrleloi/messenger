@@ -69,7 +69,8 @@ RUN composer update
 COPY helpers.php /var/www/vendor/rtippin/messenger/src/helpers.php
 
 # Run NPM install
-RUN npm run production
+RUN npm install
+RUN npm run prod
 
 # Change current user to www
 USER www
