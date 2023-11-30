@@ -451,7 +451,7 @@ window.ThreadTemplates = (function () {
         images_message : function(data){
             return '<div class="messages-image-view col text-center">' +
                 '<a target="_blank" href="'+data.image.lg+'">' +
-                '<img class="lazy img-fluid shadow rounded" data-src="'+data.image.md+'" /><br><br>' +
+                '<img class="lazy img-fluid shadow rounded" data-src="'+data.image.lg+'" /><br><br>' +
                 Messenger.format().escapeHtml(data.owner.name)+' on '+Messenger.format().makeHumanTime(data.created_at)+
                 '</a></div><hr>'
         },

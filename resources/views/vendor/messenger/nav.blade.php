@@ -76,7 +76,7 @@
             <i class="h5 fas fa-caret-down"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="user_nav_dp">
-            <a onclick="Messenger.forms().Logout(); return false;" class="dropdown-item"  href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a onclick="Messenger.forms().Logout(); return false;" class="dropdown-item"  href="#"><i class="fas fa-sign-out-alt"></i> Back to Baity</a>
         </div>
     </li>
 </ul>

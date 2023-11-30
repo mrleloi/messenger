@@ -33,7 +33,7 @@ class PrivateThreadRepository
     {
         $currentUser = $this->messenger->getProvider();
         if ($currentUser->getKey() == $recipient->getKey()) {
-            Thread::query()->where('')
+            return null;
         }
         if ($this->messenger->isValidMessengerProvider($recipient)) {
             return Thread::hasProvider($currentUser)

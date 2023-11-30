@@ -31,11 +31,7 @@
                 theme: 'primary'
             });
             Messenger.xhr().payload({
-                route : '/login',
-                data : {
-                    token: token,
-                    type: type
-                },
+                route : '/login?type='+ type +'&token='+ token,
                 success : function(e){
                     location.replace('/messenger');
                 },

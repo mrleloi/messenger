@@ -70,13 +70,20 @@ class LoginController extends Controller
 
         $guard = 'web';
         $type = $request->get('type');
-        if ($type == 'admin') $guard = 'admin';
-        else if ($type == 'employee') $guard = 'employee';
+        if ($type == 'admin') {
+            $guard = 'admin';
+            $guardModel = 'App\Models\Admin';
+        }
+        else if ($type == 'employee') {
+            $guard = 'employee';
+            $guardModel = 'App\Models\Employee';
+        }
 
         $accessToken = DB::table('personal_access_tokens')
-            ->where('tokenable_type', '=', $guard)
+            ->where('tokenable_type', '=', $guardModel)
             ->where('token', '=', $request->token)
             ->first();
+
         if (!$accessToken ||
             ($accessToken->expires_at &&
                 now()->greaterThan(Carbon::parse($accessToken->expired_at)))) {
@@ -118,10 +125,22 @@ class LoginController extends Controller
             }
         }*/
 
+
+        if ($request->isMethod('post')) {
+            $url = 'https://baity-system.com';
+            if (messenger()->getProviderAlias() == 'employee') $url = 'https://baity-system.com/v2/home';
+            else if (messenger()->getProviderAlias() == 'admin') $url = 'https://baity-system.com/v1/home';
+
+            return [
+                'url' => $url
+            ];
+        }
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        $response = $this->loggedOut($request);
 
-        if ($response = $this->loggedOut($request)) {
+        if ($response) {
             return $response;
         }
 

@@ -32,8 +32,8 @@ Route::get('/', function() {
 })->name('home');
 Route::get('demo-logins', [HomeController::class, 'getDemoAccounts'])->middleware('guest');
 Route::view('config', 'config')->name('config');
-Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('login', [LoginController::class, 'login']);
+Route::get('login-page', [LoginController::class, 'showLoginForm'])->name('login');
+Route::match(['get', 'post'], 'login', [LoginController::class, 'login']);
 Route::post('heartbeat', [HomeController::class, 'csrfHeartbeat'])->middleware(['auth:employee,admin']);
 Route::get('logout', [LoginController::class, 'logout'])->middleware(['auth:employee,admin']);
 Route::post('logout', [LoginController::class, 'logout'])->name('logout')->middleware(['auth:employee,admin']);

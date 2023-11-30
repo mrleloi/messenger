@@ -21,9 +21,13 @@ class HomeController extends Controller
     public function getDemoAccounts(): JsonResponse
     {
         $employees = Employee::demo()
-            ->leftjoin('personal_access_tokens', function (JoinClause $join) {
+            ->leftJoin('personal_access_tokens', function (JoinClause $join) {
                 $join->on('employee.id', '=', 'personal_access_tokens.tokenable_id')
-                    ->where('personal_access_tokens.tokenable_type', '=', 'employee');
+                    ->where('personal_access_tokens.tokenable_type', '=', 'App\Models\Employee')
+                    ->where('personal_access_tokens.updated_at', '=', \DB::raw('
+						(select max(updated_at) from personal_access_tokens
+						where employee.id=personal_access_tokens.tokenable_id and personal_access_tokens.tokenable_type="App\Models\Employee")
+					'));
             })
             ->get()
             ->shuffle()
@@ -31,9 +35,13 @@ class HomeController extends Controller
             ->take(5);
 
         $admins = Admin::demo()
-            ->leftjoin('personal_access_tokens', function (JoinClause $join) {
+            ->leftJoin('personal_access_tokens', function (JoinClause $join) {
                 $join->on('admin.id', '=', 'personal_access_tokens.tokenable_id')
-                    ->where('personal_access_tokens.tokenable_type', '=', 'admin');
+                    ->where('personal_access_tokens.tokenable_type', '=', 'App\Models\Admin')
+                    ->where('personal_access_tokens.updated_at', '=', \DB::raw('
+						(select max(updated_at) from personal_access_tokens
+						where admin.id=personal_access_tokens.tokenable_id and personal_access_tokens.tokenable_type="App\Models\Admin")
+					'));
             })
             ->get()
             ->shuffle()
