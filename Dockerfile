@@ -45,14 +45,11 @@ RUN useradd -u 1000 -ms /bin/bash -g www www
 # Copy existing application directory contents
 COPY . /var/www
 
-# Copy existing application directory permissions
-COPY --chown=www:www . /var/www
-
 # Install Supervisor for process control
 RUN mkdir -p /var/log/supervisor
 
 # Copy the Laravel worker configuration
-COPY ./worker.conf /etc/supervisor/conf.d/
+COPY worker.conf /etc/supervisor/conf.d/
 
 # Start Supervisor to manage the Laravel worker process
 CMD ["/usr/bin/supervisord", "-n"]
@@ -71,6 +68,8 @@ USER root
 # CHMOD files/folders
 RUN chown -R www:www storage
 RUN chown -R www:www bootstrap/cache
+RUN chmod -R 777 storage
+RUN chmod -R 777 bootstrap/cache
 
 # Change current user to www
 USER www
