@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y \
     redis-server \
     nodejs \
     npm \
+    supervisor \
     unzip \
     git \
     curl \
@@ -38,8 +39,7 @@ RUN docker-php-ext-install gd
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install Supervisor for process control
-RUN apt-get install -y supervisor && \
-    mkdir -p /var/log/supervisor
+RUN mkdir -p /var/log/supervisor
     
 # Run Composer install
 RUN composer update
