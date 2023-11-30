@@ -16,6 +16,9 @@ RUN apt-get update && apt-get install -y \
     zip \
     jpegoptim optipng pngquant gifsicle \
     vim \
+    redis-server \
+    nodejs \
+    npm \
     unzip \
     git \
     curl \
@@ -33,6 +36,22 @@ RUN docker-php-ext-install gd
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install Supervisor for process control
+RUN apt-get install -y supervisor && \
+    mkdir -p /var/log/supervisor
+    
+# Run Composer install
+RUN composer update
+
+# Run NPM install
+RUN npm run production
+
+# Copy the Laravel worker configuration
+COPY ./worker.conf /etc/supervisor/conf.d/
+
+# Start Supervisor to manage the Laravel worker process
+CMD ["/usr/bin/supervisord", "-n"]
 
 # Add user for laravel application
 RUN groupadd -g 1000 www
