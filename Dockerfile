@@ -1,5 +1,4 @@
 FROM php:8.1-fpm
-USER jenkins
 
 # Copy composer.lock and composer.json
 COPY composer.lock composer.json /var/www/
@@ -67,12 +66,14 @@ COPY helpers.php /var/www/vendor/rtippin/messenger/src/helpers.php
 RUN npm install
 RUN npm run prod
 
-# Change current user to www
-USER www
+USER root
 
 # CHMOD files/folders
 RUN chown -R www:www storage
 RUN chown -R www:www bootstrap/cache
+
+# Change current user to www
+USER www
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
