@@ -50,7 +50,7 @@ services:
       SERVICE_NAME: mysql
     volumes:
       - dbdata:/var/lib/mysql/
-      - ./vagrant-main/mysql/my.cnf:/etc/mysql/my.cnf
+      - ./vagrant-main/mysql/:/etc/mysql/
     networks:
       - app-network
 
