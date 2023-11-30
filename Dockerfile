@@ -1,5 +1,5 @@
 FROM php:8.1-fpm
-USER jenkins
+#USER jenkins
 
 # Copy composer.lock and composer.json
 COPY composer.lock composer.json /var/www/
@@ -50,10 +50,12 @@ RUN groupadd -g 1000 www
 RUN useradd -u 1000 -ms /bin/bash -g www www
 
 # CHMOD files/folders
-RUN chown -R www-data.www-data storage
-RUN chown -R www-data.www-data bootstrap/cache
-RUN chown -R www.www storage
-RUN chown -R www.www bootstrap/cache
+RUN chown -R www-data:www-data storage
+RUN chown -R www-data:www-data bootstrap/cache
+RUN chown -R www:www storage
+RUN chown -R www:www bootstrap/cache
+RUN chmod -R 777 storage
+RUN chmod -R 777 bootstrap/cache
 
 # Install Supervisor for process control
 RUN mkdir -p /var/log/supervisor
