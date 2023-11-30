@@ -58,6 +58,7 @@ CMD ["/usr/bin/supervisord", "-n"]
 RUN composer update
 
 COPY helpers.php /var/www/vendor/rtippin/messenger/src/helpers.php
+COPY mix-manifest.json /var/www/public/vendor/messenger/mix-manifest.json
 
 # Run NPM install
 RUN npm install
