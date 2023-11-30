@@ -32,6 +32,10 @@ services:
     volumes:
       - ./:/var/www
       - ./docker-main/nginx/:/etc/nginx/conf.d/
+      - /etc/letsencrypt/live/baity-dev.baityapp.online/fullchain.pem:/etc/nginx/ssl/fullchain.pem
+      - /etc/letsencrypt/live/baity-dev.baityapp.online:/etc/nginx/ssl/privkey.pem
+      - /etc/letsencrypt/options-ssl-nginx.conf:/etc/nginx/ssl/options-ssl-nginx.conf
+      - /etc/letsencrypt/ssl-dhparams.pem:/etc/nginx/ssl/ssl-dhparams.pem
     env_file: .env
     networks:
       - app-network
