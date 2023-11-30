@@ -1,8 +1,5 @@
 FROM php:8.1-fpm
 
-# Copy composer.lock and composer.json
-COPY composer.lock composer.json /var/www/
-
 # Set working directory
 WORKDIR /var/www
 
@@ -15,7 +12,6 @@ RUN apt-get update && apt-get install -y \
     locales \
     zip \
     jpegoptim optipng pngquant gifsicle \
-    vim \
     nano \
     nodejs \
     npm \
@@ -36,9 +32,6 @@ RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
 RUN docker-php-ext-configure gd --with-external-gd
 RUN docker-php-ext-install gd
 
-# Install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
 # Add user for laravel application
 RUN groupadd -g 1000 www
 RUN useradd -u 1000 -ms /bin/bash -g www www
@@ -54,6 +47,9 @@ COPY worker.conf /etc/supervisor/conf.d/
 
 # Start Supervisor to manage the Laravel worker process
 CMD ["/usr/bin/supervisord", "-n"]
+
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Run Composer install
 RUN composer update
