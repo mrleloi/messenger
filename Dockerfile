@@ -38,20 +38,11 @@ RUN docker-php-ext-install gd
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install Supervisor for process control
-RUN mkdir -p /var/log/supervisor
-    
-# Run Composer install
-RUN composer update
+# Copy existing application directory contents
+COPY . /var/www
 
-# Run NPM install
-RUN npm run production
-
-# Copy the Laravel worker configuration
-COPY ./worker.conf /etc/supervisor/conf.d/
-
-# Start Supervisor to manage the Laravel worker process
-CMD ["/usr/bin/supervisord", "-n"]
+# Copy existing application directory permissions
+COPY --chown=www:www . /var/www
 
 # Add user for laravel application
 RUN groupadd -g 1000 www
@@ -63,11 +54,20 @@ RUN chown -R www-data.www-data bootstrap/cache
 RUN chown -R www.www storage
 RUN chown -R www.www bootstrap/cache
 
-# Copy existing application directory contents
-COPY . /var/www
+# Install Supervisor for process control
+RUN mkdir -p /var/log/supervisor
 
-# Copy existing application directory permissions
-COPY --chown=www:www . /var/www
+# Copy the Laravel worker configuration
+COPY ./worker.conf /etc/supervisor/conf.d/
+
+# Start Supervisor to manage the Laravel worker process
+CMD ["/usr/bin/supervisord", "-n"]
+
+# Run Composer install
+RUN composer update
+
+# Run NPM install
+RUN npm run production
 
 # Change current user to www
 USER www
