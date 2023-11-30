@@ -58,10 +58,10 @@ RUN groupadd -g 1000 www
 RUN useradd -u 1000 -ms /bin/bash -g www www
 
 # CHMOD files/folders
-chown -R www-data.www-data storage
-chown -R www-data.www-data bootstrap/cache
-chown -R www.www storage
-chown -R www.www bootstrap/cache
+RUN chown -R www-data.www-data storage
+RUN chown -R www-data.www-data bootstrap/cache
+RUN chown -R www.www storage
+RUN chown -R www.www bootstrap/cache
 
 # Copy existing application directory contents
 COPY . /var/www
