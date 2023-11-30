@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
     zip \
     jpegoptim optipng pngquant gifsicle \
     vim \
+    nano \
     nodejs \
     npm \
     redis-server \
