@@ -80,6 +80,9 @@ WORKDIR $APP_HOME
 COPY . $APP_HOME/
 COPY .env.$ENV $APP_HOME/.env
 
+RUN pwd
+RUN ls -al
+
 # CHMOD files/folders
 RUN chmod -R 777 storage
 RUN chmod -R 777 bootstrap/cache
