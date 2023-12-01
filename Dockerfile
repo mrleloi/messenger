@@ -27,15 +27,18 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
       nano \
       git \
       unzip \
-      libicu-dev \
-      zlib1g-dev \
-      libxml2 \
-      libxml2-dev \
-      libreadline-dev \
       supervisor \
       cron \
       sudo \
-      libzip-dev 
+      libpng-dev \
+      libonig-dev \
+      libxml2 \
+      libxml2-dev \
+      libreadline-dev \
+      libicu-dev \
+      zlib1g-dev \
+      libzip-dev \
+      libgd-dev
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
