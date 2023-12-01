@@ -46,8 +46,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 #RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Add user for laravel application
-RUN groupadd -g 1000 $USERNAME
-RUN useradd -u 1000 -ms /bin/bash -g $USERNAME $USERNAME
+RUN groupadd -g $HOST_UID $USERNAME
+RUN useradd -u $HOST_UID -ms /bin/bash -g $USERNAME $USERNAME
 
 # create document root, fix permissions for www-data user and change owner to www-data
 RUN mkdir -p $APP_HOME/public && \
