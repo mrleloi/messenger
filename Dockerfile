@@ -37,15 +37,13 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
       libonig-dev \
       libxml2-dev \
       libzip-dev \
-      libgd-dev
+      libgd-dev \
+	  && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
+	  && docker-php-ext-configure gd --with-external-gd
+	  && docker-php-ext-install gd
 
 # Clear cache
 #RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Install extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
-RUN docker-php-ext-configure gd --with-external-gd
-RUN docker-php-ext-install gd
 
 # create document root, fix permissions for www-data user and change owner to www-data
 RUN mkdir -p $APP_HOME/public && \
