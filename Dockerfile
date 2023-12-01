@@ -27,7 +27,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
       nano \
       nodejs \
       npm \
-      redis-server 
+      redis-server \ 
       git \
       unzip \
       supervisor \
