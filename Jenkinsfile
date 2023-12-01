@@ -5,6 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/mrleloi/messenger/'
+                sh "git pull origin main"
             }
         }
         stage('Build Docker Image') {
