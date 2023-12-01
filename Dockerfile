@@ -32,21 +32,17 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
       sudo \
       libpng-dev \
       libonig-dev \
-      libxml2 \
       libxml2-dev \
-      libreadline-dev \
-      libicu-dev \
-      zlib1g-dev \
       libzip-dev \
       libgd-dev
 
 # Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+#RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install extensions
-RUN docker-php-ext-configure intl
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 RUN docker-php-ext-configure gd --with-external-gd
-RUN docker-php-ext-install pdo_mysql sockets mbstring exif pcntl bcmath intl gd zip opcache
+RUN docker-php-ext-install gd
 
 # create document root, fix permissions for www-data user and change owner to www-data
 RUN mkdir -p $APP_HOME/public && \
