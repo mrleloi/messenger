@@ -6,7 +6,7 @@ ENV ENV=$BUILD_ARGUMENT_ENV
 ENV APP_HOME /var/www/html
 ARG HOST_UID=1000
 ARG HOST_GID=1000
-ENV USERNAME=www-data
+ENV USERNAME=www
 ARG INSIDE_DOCKER_CONTAINER=1
 ENV INSIDE_DOCKER_CONTAINER=$INSIDE_DOCKER_CONTAINER
 ARG XDEBUG_CONFIG=main
@@ -51,9 +51,13 @@ RUN mkdir -p $APP_HOME/public && \
     && usermod -o -u $HOST_UID $USERNAME -d /home/$USERNAME \
     && groupmod -o -g $HOST_GID $USERNAME \
     && chown -R ${USERNAME}:${USERNAME} $APP_HOME
+	
+# Add user for laravel application
+RUN groupadd -g 1000 $USERNAME
+RUN useradd -u 1000 -ms /bin/bash -g $USERNAME $USERNAME
 
 # put php config for Laravel
-COPY ./docker/$BUILD_ARGUMENT_ENV/www.conf /usr/local/etc/php-fpm.d/www.conf
+#COPY ./docker/$BUILD_ARGUMENT_ENV/www.conf /usr/local/etc/php-fpm.d/www.conf
 COPY ./docker/$BUILD_ARGUMENT_ENV/php.ini /usr/local/etc/php/php.ini
 
 # install Xdebug in case dev/test environment
@@ -99,5 +103,5 @@ COPY helpers.php /var/www/html/vendor/rtippin/messenger/src/helpers.php
 USER ${USERNAME}
 
 # Expose port 9000 and start php-fpm server
-#EXPOSE 9000
-#CMD ["php-fpm"]
+EXPOSE 9000
+CMD ["php-fpm"]
