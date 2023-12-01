@@ -85,8 +85,8 @@ COPY --chown=${USERNAME}:${USERNAME} . $APP_HOME/
 COPY --chown=${USERNAME}:${USERNAME} .env.$ENV $APP_HOME/.env
 
 # install all PHP dependencies
-RUN if [ "$BUILD_ARGUMENT_ENV" = "dev" ] || [ "$BUILD_ARGUMENT_ENV" = "test" ]; then COMPOSER_MEMORY_LIMIT=-1 composer install --optimize-autoloader --no-interaction --no-progress; \
-    else COMPOSER_MEMORY_LIMIT=-1 composer install --optimize-autoloader --no-interaction --no-progress --no-dev; \
+RUN if [ "$BUILD_ARGUMENT_ENV" = "dev" ] || [ "$BUILD_ARGUMENT_ENV" = "test" ]; then COMPOSER_MEMORY_LIMIT=-1 composer update --optimize-autoloader --no-interaction --no-progress; \
+    else COMPOSER_MEMORY_LIMIT=-1 composer update --optimize-autoloader --no-interaction --no-progress --no-dev; \
     fi
 
 # copy vendor files need to be replace
