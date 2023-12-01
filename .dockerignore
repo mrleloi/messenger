@@ -6,8 +6,8 @@
 ### Other data
 storage/mysql-data
 vendor/
-bootstrap/cache
-!bootstrap/cache/.gitignore
+#bootstrap/cache
+#!bootstrap/cache/.gitignore
 .phpstorm.meta.php
 _ide_helper.php
 

@@ -61,10 +61,10 @@ COPY ./docker/dev/xdebug-${XDEBUG_CONFIG}.ini /tmp/xdebug.ini
 RUN chmod u+x /tmp/do_we_need_xdebug.sh && /tmp/do_we_need_xdebug.sh
 
 # Install composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+#RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 # Get latest Composer
-#COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN chmod +x /usr/local/bin/composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+#RUN chmod +x /usr/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
 # add supervisor
@@ -76,16 +76,11 @@ RUN chmod 0600 /var/spool/cron/crontabs/root
 # set working directory
 WORKDIR $APP_HOME
 
+USER ${USERNAME}
+
 # copy source files and config file
-COPY . $APP_HOME/
-COPY .env.$ENV $APP_HOME/.env
-
-RUN pwd
-RUN ls -al
-
-# CHMOD files/folders
-RUN chmod -R 777 storage
-RUN chmod -R 777 bootstrap/cache
+COPY --chown=${USERNAME}:${USERNAME} . $APP_HOME/
+COPY --chown=${USERNAME}:${USERNAME} .env.$ENV $APP_HOME/.env
 
 # install all PHP dependencies
 RUN if [ "$BUILD_ARGUMENT_ENV" = "dev" ] || [ "$BUILD_ARGUMENT_ENV" = "test" ]; then COMPOSER_MEMORY_LIMIT=-1 composer update --optimize-autoloader --no-interaction --no-progress; \
@@ -100,11 +95,4 @@ RUN npm run prod
 COPY mix-manifest.json /var/www/public/vendor/messenger/mix-manifest.json
 COPY helpers.php /var/www/vendor/rtippin/messenger/src/helpers.php
 
-# CHMOD files/folders
-RUN chown -R ${USERNAME}:${USERNAME} storage
-RUN chown -R ${USERNAME}:${USERNAME} bootstrap/cache
-#RUN chmod -R 777 storage
-#RUN chmod -R 777 bootstrap/cache
-
-USER ${USERNAME}
-#USER root
+USER root
