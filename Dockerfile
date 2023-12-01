@@ -76,11 +76,9 @@ RUN chmod 0600 /var/spool/cron/crontabs/root
 # set working directory
 WORKDIR $APP_HOME
 
-USER ${USERNAME}
-
 # copy source files and config file
-COPY --chown=${USERNAME}:${USERNAME} . $APP_HOME/
-COPY --chown=${USERNAME}:${USERNAME} .env.$ENV $APP_HOME/.env
+COPY . $APP_HOME/
+COPY .env.$ENV $APP_HOME/.env
 
 # install all PHP dependencies
 RUN if [ "$BUILD_ARGUMENT_ENV" = "dev" ] || [ "$BUILD_ARGUMENT_ENV" = "test" ]; then COMPOSER_MEMORY_LIMIT=-1 composer update --optimize-autoloader --no-interaction --no-progress; \
@@ -95,4 +93,11 @@ RUN npm run prod
 COPY mix-manifest.json /var/www/public/vendor/messenger/mix-manifest.json
 COPY helpers.php /var/www/vendor/rtippin/messenger/src/helpers.php
 
-USER root
+# CHMOD files/folders
+RUN chown -R ${USERNAME}:${USERNAME} storage
+RUN chown -R ${USERNAME}:${USERNAME} bootstrap/cache
+RUN chmod -R 777 storage
+RUN chmod -R 777 bootstrap/cache
+
+USER ${USERNAME}
+#USER root
