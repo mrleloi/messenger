@@ -96,3 +96,7 @@ COPY mix-manifest.json /var/www/public/vendor/messenger/mix-manifest.json
 COPY helpers.php /var/www/vendor/rtippin/messenger/src/helpers.php
 
 USER root
+
+# Expose port 9000 and start php-fpm server
+#EXPOSE 9000
+#CMD ["php-fpm"]
