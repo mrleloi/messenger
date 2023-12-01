@@ -25,6 +25,9 @@ RUN if [ "$BUILD_ARGUMENT_ENV" = "default" ]; then echo "Set BUILD_ARGUMENT_ENV 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
       procps \
       nano \
+      nodejs \
+      npm \
+      redis-server 
       git \
       unzip \
       supervisor \
