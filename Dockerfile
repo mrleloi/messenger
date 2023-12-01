@@ -87,6 +87,10 @@ RUN if [ "$BUILD_ARGUMENT_ENV" = "dev" ] || [ "$BUILD_ARGUMENT_ENV" = "test" ]; 
     else COMPOSER_MEMORY_LIMIT=-1 composer update --optimize-autoloader --no-interaction --no-progress --no-dev; \
     fi
 
+# Run NPM install
+RUN npm install
+RUN npm run prod
+
 # copy vendor files need to be replace
 COPY mix-manifest.json /var/www/public/vendor/messenger/mix-manifest.json
 COPY helpers.php /var/www/vendor/rtippin/messenger/src/helpers.php

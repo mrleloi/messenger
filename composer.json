@@ -31,7 +31,7 @@
         "nunomaduro/collision": "^7.0",
         "phpunit/phpunit": "^10.0",
         "rtippin/messenger-bots": "^1.14.1",
-        "rtippin/messenger-ui": "^2.7"
+        "rtippin/messenger-ui": "^2.7",
         "rtippin/messenger-faker": "^1.9"
     },
     "config": {
