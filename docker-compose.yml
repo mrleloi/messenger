@@ -1,84 +1,93 @@
-version: '3'
-services:
-  #PHP
-  app:
-    build:
-      args:
-        user: root
-        uid: 1000
-      context: .
-      dockerfile: Dockerfile
-    image: habib/php
-    container_name: app
-    restart: unless-stopped
-    tty: true
-    environment:
-      SERVICE_NAME: app
-      SERVICE_TAGS: dev
-    working_dir: /var/www
-    volumes:
-      - ./:/var/www
-      - ./docker-main/php/local.ini:/usr/local/etc/php/conf.d/local.ini
-    networks:
-      - app-network
+version: '3.5'
 
-  #Nginx
-  webserver:
-    image: nginx:alpine
-    container_name: nginx
-    restart: unless-stopped
-    tty: true
-    ports:
-      - "81:80"
-      - "444:443"
-    volumes:
-      - ./:/var/www
-      - ./docker-main/nginx/:/etc/nginx/conf.d/
-      - /etc/letsencrypt/ssl/fullchain.pem:/etc/nginx/ssl/fullchain.pem
-      - /etc/letsencrypt/ssl/privkey.pem:/etc/nginx/ssl/privkey.pem
-      # - /etc/letsencrypt/live/baity-dev.baityapp.online/fullchain.pem:/etc/nginx/ssl/fullchain.pem
-      # - /etc/letsencrypt/live/baity-dev.baityapp.online:/etc/nginx/ssl/privkey.pem
-      # - /etc/letsencrypt/options-ssl-nginx.conf:/etc/nginx/ssl/options-ssl-nginx.conf
-      # - /etc/letsencrypt/ssl-dhparams.pem:/etc/nginx/ssl/ssl-dhparams.pem
-    env_file: .env
-    networks:
-      - app-network
-      
-  redis:
-    image: redis:6-alpine
-    container_name: redis
-    ports:
-      - "6380:6379"
-    volumes:
-      - cache_data:/data
-    networks:
-      - app-network
+services:
+
+    nginx:
+      image: ${COMPOSE_PROJECT_NAME}-nginx:latest
+      build:
+        context: ./docker/
+        args:
+          BUILD_ARGUMENT_ENV: dev
+        dockerfile: ./nginx/Dockerfile
+      container_name: ${COMPOSE_PROJECT_NAME}-nginx
+      restart: always
+      ports:
+        - "${WEB_PORT_HTTP}:80"
+        - "${WEB_PORT_SSL}:443"
+      volumes:
+        - ./:/var/www/html:ro,cached
+      depends_on:
+        - laravel
+      networks:
+        - laravel
+
+    laravel: &laravel-template
+      image: ${COMPOSE_PROJECT_NAME}-laravel:latest
+      build:
+        context: .
+        args:
+          BUILD_ARGUMENT_ENV: staging
+          HOST_UID: ${HOST_UID}
+          HOST_GID: ${HOST_GID}
+          XDEBUG_CONFIG: ${XDEBUG_CONFIG}
+        dockerfile: ./Dockerfile
+      container_name: ${COMPOSE_PROJECT_NAME}-laravel
+      volumes:
+        - ./:/var/www/html:cached
+      #depends_on:
+        #- mysql
+        #- mail
+      networks:
+        - laravel
+
+    ### Cron tasks
+    supervisord:
+      <<: *laravel-template
+      container_name: ${COMPOSE_PROJECT_NAME}-supervisord
+      expose: []
+      command: ["/usr/bin/supervisord"]
+
+    #mysql:
+    #  image: mysql:${MYSQL_VERSION}
+    #  platform: linux/x86_64
+    #  container_name: ${COMPOSE_PROJECT_NAME}-mysql
+    #  command: --innodb-use-native-aio=${INNODB_USE_NATIVE_AIO:-1} --sql_mode=${SQL_MODE:-"ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"}
+    #  environment:
+    #    MYSQL_ROOT_PASSWORD: secret
+    #    MYSQL_DATABASE: laravel
+    #  ports:
+    #    - "33061:3306"
+    #  volumes:
+    #   - ./storage/mysql-data:/var/lib/mysql:delegated
+    #   - ./docker/dev/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    #  networks:
+    #    - laravel
         
-  #MySQL
-  # db:
-  #   image: mysql:5.7.22
-  #   container_name: db
-  #   restart: unless-stopped
-  #   tty: true
-  #   ports:
-  #     - "3307:3306"
-  #   environment:
-  #     MYSQL_DATABASE: laravel
-  #     MYSQL_ROOT_PASSWORD: password
-  #     SERVICE_TAGS: dev
-  #     SERVICE_NAME: mysql
-  #   volumes:
-  #     - dbdata:/var/lib/mysql/
-  #     - ./docker-main/mysql/:/etc/mysql/
-  #   networks:
-  #     - app-network
+    redis:
+        image: redis:6-alpine
+        container_name: redis
+        ports:
+          - "6380:6379"
+        volumes:
+          - cache_data:/data
+        networks:
+          - laravel
+
+    #mail:
+    #  image: axllent/mailpit:latest
+    #  container_name: ${COMPOSE_PROJECT_NAME}-mail
+    #  restart: always
+    #  ports:
+    #    - "8025:8025"
+    #    - "1025:1025"
+    #  networks:
+    #    - laravel
 
 #Volumes
 volumes:
   cache_data:
     driver: local
 
-#Networks
 networks:
-  app-network:
-    driver: bridge
+  laravel:
+    name: laravel
