@@ -93,10 +93,10 @@ RUN npm install
 RUN npm run prod
 
 # copy vendor files need to be replace
-COPY mix-manifest.json /var/www/public/vendor/messenger/mix-manifest.json
-COPY helpers.php /var/www/vendor/rtippin/messenger/src/helpers.php
+COPY mix-manifest.json /var/www/html/public/vendor/messenger/mix-manifest.json
+COPY helpers.php /var/www/html/vendor/rtippin/messenger/src/helpers.php
 
-USER root
+USER ${USERNAME}
 
 # Expose port 9000 and start php-fpm server
 #EXPOSE 9000
