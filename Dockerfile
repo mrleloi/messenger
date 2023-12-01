@@ -2,14 +2,17 @@ FROM php:8.1-fpm
 
 # set main params
 ARG BUILD_ARGUMENT_ENV=staging
-ENV ENV=$BUILD_ARGUMENT_ENV
-ENV APP_HOME /var/www/html
+ARG INSIDE_DOCKER_CONTAINER=1
 ARG HOST_UID=1000
 ARG HOST_GID=1000
-ENV USERNAME=www
-ARG INSIDE_DOCKER_CONTAINER=1
-ENV INSIDE_DOCKER_CONTAINER=$INSIDE_DOCKER_CONTAINER
 ARG XDEBUG_CONFIG=main
+
+ENV ENV=$BUILD_ARGUMENT_ENV
+ENV APP_HOME /var/www/html
+ENV USERNAME=www
+ENV HOST_UID=$HOST_UID
+ENV HOST_GID=$HOST_GID
+ENV INSIDE_DOCKER_CONTAINER=$INSIDE_DOCKER_CONTAINER
 ENV XDEBUG_CONFIG=$XDEBUG_CONFIG
 
 # check environment
@@ -46,7 +49,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 #RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Add user for laravel application
-RUN groupadd -g $HOST_UID $USERNAME
+RUN groupadd -g $HOST_GID $USERNAME
 RUN useradd -u $HOST_UID -ms /bin/bash -g $USERNAME $USERNAME
 
 # create document root, fix permissions for www-data user and change owner to www-data
