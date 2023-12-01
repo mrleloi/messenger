@@ -32,8 +32,8 @@ services:
         dockerfile: ./Dockerfile
       container_name: ${COMPOSE_PROJECT_NAME}-laravel
       restart: always
-      depends_on:
-        - mysql
+      #depends_on:
+      #  - mysql
       networks:
         - laravel
 
