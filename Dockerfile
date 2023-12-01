@@ -65,7 +65,7 @@ USER root
 
 COPY mix-manifest.json /var/www/public/vendor/messenger/mix-manifest.json
 
-COPY helpers.php /var/www/vendor/rtippin/messenger/src/
+COPY helpers.php /var/www/vendor/rtippin/messenger/src/helpers.php
 
 # CHMOD files/folders
 RUN chown -R www:www storage
