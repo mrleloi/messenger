@@ -35,23 +35,15 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
       supervisor \
       cron \
       sudo \
-      libzip-dev \
-    && docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd \
-    && docker-php-ext-configure intl \
-    && docker-php-ext-configure gd --with-external-gd \
-    && docker-php-ext-install \
-      pdo_mysql \
-      sockets \
-	  bcmath \
-	  gd \
-	  pcntl \
-      intl \
-      opcache \
-      zip \
-    && rm -rf /tmp/* \
-    && rm -rf /var/list/apt/* \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean
+      libzip-dev 
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install extensions
+RUN docker-php-ext-configure intl
+RUN docker-php-ext-configure gd --with-external-gd
+RUN docker-php-ext-install pdo_mysql sockets mbstring exif pcntl bcmath intl gd zip opcache
 
 # create document root, fix permissions for www-data user and change owner to www-data
 RUN mkdir -p $APP_HOME/public && \
