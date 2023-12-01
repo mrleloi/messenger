@@ -15,23 +15,23 @@
         "jenssegers/agent": "^2.6",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
-        "laravel/horizon": "^5.21",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^4.0",
         "predis/predis": "^2.2",
         "pusher/pusher-php-server": "7.0.2",
         "rtippin/janus-client": "^1.2",
         "rtippin/messenger": "^1.22",
-        "rtippin/messenger-bots": "^1.14.1",
-        "rtippin/messenger-ui": "^2.7"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.8",
         "spatie/laravel-ignition": "^2.0",
         "fakerphp/faker": "^1.9.1",
+        "laravel/horizon": "^5.21",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^7.0",
         "phpunit/phpunit": "^10.0",
+        "rtippin/messenger-bots": "^1.14.1",
+        "rtippin/messenger-ui": "^2.7"
         "rtippin/messenger-faker": "^1.9"
     },
     "config": {
