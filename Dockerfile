@@ -80,6 +80,10 @@ WORKDIR $APP_HOME
 COPY . $APP_HOME/
 COPY .env.$ENV $APP_HOME/.env
 
+# CHMOD files/folders
+RUN chmod -R 777 storage
+RUN chmod -R 777 bootstrap/cache
+
 # install all PHP dependencies
 RUN if [ "$BUILD_ARGUMENT_ENV" = "dev" ] || [ "$BUILD_ARGUMENT_ENV" = "test" ]; then COMPOSER_MEMORY_LIMIT=-1 composer update --optimize-autoloader --no-interaction --no-progress; \
     else COMPOSER_MEMORY_LIMIT=-1 composer update --optimize-autoloader --no-interaction --no-progress --no-dev; \
@@ -96,8 +100,8 @@ COPY helpers.php /var/www/vendor/rtippin/messenger/src/helpers.php
 # CHMOD files/folders
 RUN chown -R ${USERNAME}:${USERNAME} storage
 RUN chown -R ${USERNAME}:${USERNAME} bootstrap/cache
-RUN chmod -R 777 storage
-RUN chmod -R 777 bootstrap/cache
+#RUN chmod -R 777 storage
+#RUN chmod -R 777 bootstrap/cache
 
 USER ${USERNAME}
 #USER root
