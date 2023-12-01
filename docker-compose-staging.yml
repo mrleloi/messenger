@@ -32,6 +32,8 @@ services:
         dockerfile: ./Dockerfile
       container_name: ${COMPOSE_PROJECT_NAME}-laravel
       restart: always
+      volumes:
+        - ./:/var/www/html:cached
       #depends_on:
       #  - mysql
       networks:
