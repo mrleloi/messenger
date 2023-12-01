@@ -38,9 +38,13 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
       libzip-dev \
     && docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd \
     && docker-php-ext-configure intl \
+    && docker-php-ext-configure gd --with-external-gd \
     && docker-php-ext-install \
       pdo_mysql \
       sockets \
+	  bcmath \
+	  gd \
+	  pcntl \
       intl \
       opcache \
       zip \
