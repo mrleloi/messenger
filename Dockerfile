@@ -39,7 +39,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
       libzip-dev \
       libgd-dev \
 	  && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
-	  && docker-php-ext-configure gd --with-external-gd
+	  && docker-php-ext-configure gd --with-external-gd \
 	  && docker-php-ext-install gd
 
 # Clear cache
