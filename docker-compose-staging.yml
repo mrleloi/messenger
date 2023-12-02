@@ -38,11 +38,11 @@ services:
         - laravel
 
     ### Cron tasks
-    supervisord:
-      <<: *laravel-template
-      container_name: ${COMPOSE_PROJECT_NAME}-supervisord
-      expose: []
-      command: ["/usr/bin/supervisord"]
+    #supervisord:
+    #  <<: *laravel-template
+    #  container_name: ${COMPOSE_PROJECT_NAME}-supervisord
+    #  expose: []
+    #  command: ["/usr/bin/supervisord"]
 
     #mysql:
     #  image: mysql:${MYSQL_VERSION}

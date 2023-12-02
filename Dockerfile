@@ -21,9 +21,6 @@ RUN if [ "$BUILD_ARGUMENT_ENV" = "default" ]; then echo "Set BUILD_ARGUMENT_ENV 
     else echo "Set correct BUILD_ARGUMENT_ENV in docker build-args like --build-arg BUILD_ARGUMENT_ENV=dev. Available choices are dev,test,staging,prod." && exit 2; \
     fi
 
-USER root
-RUN chmod 777 /run
-
 # install all the dependencies and enable PHP modules
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
       procps \
@@ -81,6 +78,9 @@ COPY --chown=root:root ./docker/general/supervisord.conf /etc/supervisor/conf.d/
 COPY --chown=root:crontab ./docker/general/cron /var/spool/cron/crontabs/root
 RUN chmod 777 /var/spool/cron/crontabs
 RUN chmod 777 /var/log/supervisor
+USER root
+RUN service supervisor stop
+RUN service supervisor start
 
 # set working directory
 WORKDIR $APP_HOME
