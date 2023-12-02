@@ -41,6 +41,7 @@ pipeline {
             }
             steps {
                 sh 'make start-staging'
+                sh 'docker exec --user=root environment3-laravel service supervisor status'
             }
         }
         stage('Start Master') {
@@ -51,6 +52,7 @@ pipeline {
             }
             steps {
                 sh 'make start-prod'
+                sh 'docker exec --user=root environment3-laravel service supervisor status'
             }
         }
     }
