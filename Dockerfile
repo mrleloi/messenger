@@ -76,7 +76,8 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 RUN mkdir -p /var/log/supervisor
 COPY --chown=root:root ./docker/general/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY --chown=root:crontab ./docker/general/cron /var/spool/cron/crontabs/root
-RUN chmod 0600 /var/spool/cron/crontabs/root
+RUN chmod 777 /var/spool/cron/crontabs
+RUN chmod 777 /var/log/supervisor
 
 # set working directory
 WORKDIR $APP_HOME
