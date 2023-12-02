@@ -82,12 +82,12 @@ COPY --chown=${USERNAME}:${USERNAME} . $APP_HOME/
 COPY --chown=${USERNAME}:${USERNAME} .env.$ENV $APP_HOME/.env
 
 # add supervisor
+USER root
 RUN mkdir -p /var/log/supervisor
 COPY --chown=root:root ./docker/general/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY --chown=root:crontab ./docker/general/cron /var/spool/cron/crontabs/root
 RUN chmod 777 /var/spool/cron/crontabs
 RUN chmod 777 /var/log/supervisor
-USER root
 RUN service supervisor stop
 RUN service supervisor start
 USER ${USERNAME}
