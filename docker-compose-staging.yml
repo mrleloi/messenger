@@ -58,8 +58,6 @@ services:
         - "./docker/janus/conf/janus.transport.http.jcfg:/usr/local/etc/janus/janus.transport.http.jcfg"  # open adminapi config
         - "./docker/janus/conf/janus.jcfg:/usr/local/etc/janus/janus.jcfg"
         - "./docker/janus/conf/janus.eventhandler.sampleevh.jcfg:/usr/local/etc/janus/janus.eventhandler.sampleevh.jcfg"
-      networks:
-        - laravel
 
     ### Cron tasks
     #supervisord:
