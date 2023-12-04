@@ -20,8 +20,8 @@ return [
     'main_servers' => [
 //        "wss://windysoft.asia",
 //        "https://windysoft.asia/janus",
-        "wss://127.0.0.1/janus-ws",
-        "https://127.0.0.1/janus/janus",
+        "wss://baity-dev.baityapp.online/janus-ws",
+        "https://baity-dev.baityapp.online/janus",
     ],
     'ice_servers' => [
         [

@@ -110,8 +110,8 @@ RUN apt update -y && sudo apt install  -y ffmpeg && ffmpeg -version
 #RUN apt-get update -y && apt-get install -y nginx
 #COPY nginx.conf /etc/nginx/nginx.conf
 
-RUN apt-get clean && \
-	rm -rf /var/lib/apt/lists/*
+# Clear cache
+#RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 SHELL ["/bin/bash", "-l", "-euxo", "pipefail", "-c"]
 
