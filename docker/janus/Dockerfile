@@ -96,13 +96,9 @@ RUN touch /var/log/janus/janus.log
 
 # janus
 RUN cd / &&  git clone https://github.com/meetecho/janus-gateway.git && cd /janus-gateway && \
-    git checkout refs/tags/v1.2.0 && \
+    #git checkout refs/tags/v1.2.0 && \
     sh autogen.sh &&  \
     ./configure --prefix=/usr/local \
-	--enable-post-processing \
-    --disable-rabbitmq \
-    --disable-mqtt \
-    --disable-unix-sockets \
     --enable-all-handlers && \
     make && make install && make configs
 
