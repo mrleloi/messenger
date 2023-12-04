@@ -38,7 +38,7 @@ general: {
 # limit access basing on IP addresses. For security reasons, this
 # endpoint is disabled by default, enable it by setting admin_http=true.
 admin: {
-	admin_base_path = "/admin"			# Base path to bind to in the admin/monitor web server (plain HTTP only)
+	admin_base_path = "/janus-admin"			# Base path to bind to in the admin/monitor web server (plain HTTP only)
 	admin_http = false					# Whether to enable the plain HTTP interface
 	admin_port = 7088					# Admin/monitor web server HTTP port
 	#admin_interface = "eth0"			# Whether we should bind this server to a specific interface only

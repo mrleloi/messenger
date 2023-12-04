@@ -95,13 +95,14 @@ RUN apt-get update -y && apt-get install libavutil56 libavcodec58 libavformat58 
 RUN cd / &&  git clone https://github.com/meetecho/janus-gateway.git && cd /janus-gateway && \
     git checkout refs/tags/v1.2.0 && \
     sh autogen.sh &&  \
-    ./configure --prefix=/opt/janus \
+    ./configure --prefix=/usr/local \
 	--enable-post-processing \
     --disable-rabbitmq \
     --disable-mqtt \
     --disable-unix-sockets \
     --enable-all-handlers && \
     make && make install && make configs
+
 
 #FFmpeg install
 RUN apt update -y && sudo apt install  -y ffmpeg && ffmpeg -version
