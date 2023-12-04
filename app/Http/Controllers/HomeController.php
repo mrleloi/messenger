@@ -27,7 +27,7 @@ class HomeController extends Controller
             })
 			->leftJoin('personal_access_tokens', 'table_tokens.mid', 'personal_access_tokens.id')
             ->get()
-/            ->shuffle()
+            ->shuffle()
 //            ->filter(fn (Employee $user) => $user->getProviderOnlineStatus() === MessengerProvide>
             ->take(5);
 
