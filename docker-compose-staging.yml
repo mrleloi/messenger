@@ -14,9 +14,6 @@ services:
       ports:
         - "${WEB_PORT_HTTP}:80"
         - "${WEB_PORT_SSL}:443"
-        - "8088:8088"
-        - "7088:7088"
-        - "8188:8188"
       volumes:
         - ./:/var/www/html:ro,cached
       depends_on:
