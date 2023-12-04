@@ -14,6 +14,9 @@ services:
       ports:
         - "${WEB_PORT_HTTP}:80"
         - "${WEB_PORT_SSL}:443"
+        #- "8088:8088"
+        #- "7088:7088"
+        #- "8188:8188"
       volumes:
         - ./:/var/www/html:ro,cached
       depends_on:
@@ -34,6 +37,25 @@ services:
       restart: always
       #depends_on:
       #  - mysql
+      networks:
+        - laravel
+
+    janus:
+      image: 'sucwangsr/janus-webrtc-gateway-docker:1.2.0-slim'
+      build:
+        context: ./docker/
+        dockerfile: ./janus/Dockerfile
+      container_name: janus
+      command: ["/opt/janus/bin/janus", "-F", "/opt/janus/etc/janus"] # only start janus 
+      #network_mode: "host"
+      restart: always
+      ports:
+        - "8088:8088"
+        - "7088:7088"
+        - "8188:8188"
+      volumes:
+        - "./conf/janus.transport.http.jcfg:/opt/janus/etc/janus/janus.transport.http.jcfg"  # open adminapi config
+        - "./conf/janus.jcfg:/opt/janus/etc/janus/janus.jcfg"
       networks:
         - laravel
 
@@ -59,14 +81,14 @@ services:
     #    - laravel
 
     redis:
-        image: redis:6-alpine
-        container_name: redis
-        ports:
-          - "6380:6379"
-        volumes:
-          - cache_data:/data
-        networks:
-          - laravel
+      image: redis:6-alpine
+      container_name: redis
+      ports:
+        - "6380:6379"
+      volumes:
+        - cache_data:/data
+      networks:
+        - laravel
 
 #Volumes
 volumes:
