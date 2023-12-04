@@ -23,7 +23,7 @@ class HomeController extends Controller
         $employees = Employee::demo()
             ->leftJoin(\DB::raw('(select  max(id) as mid,tokenable_id,tokenable_type from personal_access_tokens group by tokenable_type,tokenable_id having max(id)) as `table_tokens`'), function (JoinClause $join) {
                 $join->on('employee.id', '=', 'table_tokens.tokenable_id')
-                    ->where('table_tokens.tokenable_type', '=', '\'App\\\Models\\\Employee\'');
+                    ->whereRaw('table_tokens.tokenable_type = ?','App\Models\Employee');
             })
 			->leftJoin('personal_access_tokens', 'table_tokens.mid', 'personal_access_tokens.id')
             ->get()
@@ -34,7 +34,7 @@ class HomeController extends Controller
         $admins = Admin::demo()
             ->leftJoin(\DB::raw('(select  max(id) as mid,tokenable_id,tokenable_type from personal_access_tokens group by tokenable_type,tokenable_id having max(id)) as `table_tokens`'), function (JoinClause $join) {
                 $join->on('admin.id', '=', 'table_tokens.tokenable_id')
-                    ->where('table_tokens.tokenable_type', '=', '\'App\\\Models\\\Admin\'');
+                    ->whereRaw('table_tokens.tokenable_type = ?', 'App\Models\Admin');
             })
 			->leftJoin('personal_access_tokens', 'table_tokens.mid', 'personal_access_tokens.id')
             ->get()
