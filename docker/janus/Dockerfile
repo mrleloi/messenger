@@ -91,6 +91,9 @@ RUN cd /tmp/ && curl -R -O https://duktape.org/duktape-2.7.0.tar.xz \
 ## janus if build use --enable-post-processing
 RUN apt-get update -y && apt-get install libavutil56 libavcodec58 libavformat58 libavutil-dev libavcodec-dev libavformat-dev -y
 
+RUN mkdir /var/log/janus/
+RUN touch /var/log/janus/janus.log
+
 # janus
 RUN cd / &&  git clone https://github.com/meetecho/janus-gateway.git && cd /janus-gateway && \
     git checkout refs/tags/v1.2.0 && \
