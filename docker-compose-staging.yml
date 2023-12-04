@@ -44,7 +44,7 @@ services:
         dockerfile: ./janus/Dockerfile
       container_name: janus
       command: ["/usr/local/bin/janus", "-F", "/usr/local/etc/janus"] # only start janus 
-      #network_mode: "host"
+      network_mode: "host"
       restart: always
       ports:
         - "8188:8188"
@@ -57,6 +57,7 @@ services:
       volumes:
         - "./docker/janus/conf/janus.transport.http.jcfg:/usr/local/etc/janus/janus.transport.http.jcfg"  # open adminapi config
         - "./docker/janus/conf/janus.jcfg:/usr/local/etc/janus/janus.jcfg"
+        - "./docker/janus/conf/janus.eventhandler.sampleevh.jcfg:/usr/local/etc/janus/janus.eventhandler.sampleevh.jcfg"
       networks:
         - laravel
 
