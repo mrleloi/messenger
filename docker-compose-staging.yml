@@ -46,14 +46,14 @@ services:
       command: ["/usr/local/bin/janus", "-F", "/usr/local/etc/janus"] # only start janus 
       network_mode: "host"
       restart: always
-      ports:
-        - "8188:8188"
-        - "8088:8088"
-        - "8089:8089"
-        - "8889:8889"
-        - "8000:8000"
-        - "7088:7088"
-        - "7089:7089"
+      #ports:
+      #  - "8188:8188"
+      #  - "8088:8088"
+      #  - "8089:8089"
+      #  - "8889:8889"
+      #  - "8000:8000"
+      #  - "7088:7088"
+      #  - "7089:7089"
       volumes:
         - "./docker/janus/conf/janus.transport.http.jcfg:/usr/local/etc/janus/janus.transport.http.jcfg"  # open adminapi config
         - "./docker/janus/conf/janus.jcfg:/usr/local/etc/janus/janus.jcfg"
