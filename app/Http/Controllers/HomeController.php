@@ -21,31 +21,25 @@ class HomeController extends Controller
     public function getDemoAccounts(): JsonResponse
     {
         $employees = Employee::demo()
-            ->leftJoin('personal_access_tokens', function (JoinClause $join) {
-                $join->on('employee.id', '=', 'personal_access_tokens.tokenable_id')
-                    ->where('personal_access_tokens.tokenable_type', '=', 'App\Models\Employee')
-                    ->where('personal_access_tokens.updated_at', '=', \DB::raw('
-						(select max(updated_at) from personal_access_tokens
-						where employee.id=personal_access_tokens.tokenable_id and personal_access_tokens.tokenable_type="App\Models\Employee")
-					'));
+            ->leftJoin(\DB::raw('(select  max(id) as mid,tokenable_id,tokenable_type from personal_access_tokens group by tokenable_type,tokenable_id having max(id)) as `table_tokens`'), function (JoinClause $join) {
+                $join->on('employee.id', '=', 'table_tokens.tokenable_id')
+                    ->whereRaw('table_tokens.tokenable_type = ?','App\Models\Employee');
             })
+			->leftJoin('personal_access_tokens', 'table_tokens.mid', 'personal_access_tokens.id')
             ->get()
             ->shuffle()
-//            ->filter(fn (Employee $user) => $user->getProviderOnlineStatus() === MessengerProvider::OFFLINE)
+//            ->filter(fn (Employee $user) => $user->getProviderOnlineStatus() === MessengerProvide>
             ->take(5);
 
         $admins = Admin::demo()
-            ->leftJoin('personal_access_tokens', function (JoinClause $join) {
-                $join->on('admin.id', '=', 'personal_access_tokens.tokenable_id')
-                    ->where('personal_access_tokens.tokenable_type', '=', 'App\Models\Admin')
-                    ->where('personal_access_tokens.updated_at', '=', \DB::raw('
-						(select max(updated_at) from personal_access_tokens
-						where admin.id=personal_access_tokens.tokenable_id and personal_access_tokens.tokenable_type="App\Models\Admin")
-					'));
+            ->leftJoin(\DB::raw('(select  max(id) as mid,tokenable_id,tokenable_type from personal_access_tokens group by tokenable_type,tokenable_id having max(id)) as `table_tokens`'), function (JoinClause $join) {
+                $join->on('admin.id', '=', 'table_tokens.tokenable_id')
+                    ->whereRaw('table_tokens.tokenable_type = ?', 'App\Models\Admin');
             })
+			->leftJoin('personal_access_tokens', 'table_tokens.mid', 'personal_access_tokens.id')
             ->get()
             ->shuffle()
-//            ->filter(fn (Admin $user) => $user->getProviderOnlineStatus() === MessengerProvider::OFFLINE)
+//            ->filter(fn (Admin $user) => $user->getProviderOnlineStatus() === MessengerProvider::>
             ->take(5);
 
         return new JsonResponse([
