@@ -37,12 +37,34 @@ services:
       networks:
         - laravel
 
+    janus:
+      image: 'sucwangsr/janus-webrtc-gateway-docker:1.2.0-slim'
+      build:
+        context: ./docker/
+        dockerfile: ./janus/Dockerfile
+      container_name: janus
+      command: ["/usr/local/bin/janus", "-F", "/usr/local/etc/janus"] # only start janus 
+      network_mode: "host"
+      restart: always
+      #ports:
+      #  - "8188:8188"
+      #  - "8088:8088"
+      #  - "8089:8089"
+      #  - "8889:8889"
+      #  - "8000:8000"
+      #  - "7088:7088"
+      #  - "7089:7089"
+      volumes:
+        - "./docker/janus/conf/janus.transport.http.jcfg:/usr/local/etc/janus/janus.transport.http.jcfg"  # open adminapi config
+        - "./docker/janus/conf/janus.jcfg:/usr/local/etc/janus/janus.jcfg"
+        - "./docker/janus/conf/janus.eventhandler.sampleevh.jcfg:/usr/local/etc/janus/janus.eventhandler.sampleevh.jcfg"
+
     ### Cron tasks
-    supervisord:
-      <<: *laravel-template
-      container_name: ${COMPOSE_PROJECT_NAME}-supervisord
-      expose: []
-      command: ["/usr/bin/supervisord"]
+    #supervisord:
+    #  <<: *laravel-template
+    #  container_name: ${COMPOSE_PROJECT_NAME}-supervisord
+    #  expose: []
+    #  command: ["/usr/bin/supervisord"]
 
     #mysql:
     #  image: mysql:${MYSQL_VERSION}
@@ -59,14 +81,14 @@ services:
     #    - laravel
 
     redis:
-        image: redis:6-alpine
-        container_name: redis
-        ports:
-          - "6380:6379"
-        volumes:
-          - cache_data:/data
-        networks:
-          - laravel
+      image: redis:6-alpine
+      container_name: redis
+      ports:
+        - "6380:6379"
+      volumes:
+        - cache_data:/data
+      networks:
+        - laravel
 
 #Volumes
 volumes:

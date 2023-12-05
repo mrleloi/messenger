@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: "master", credentialsId: '3a0bdd53-2830-4427-bc9a-2ef3222caf4b', url: 'https://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@github.com/mrleloi/messenger.git'
+                sh "git pull origin master"
+            }
+        }
+        stage('Build Staging') {
+            steps {
+                sh 'make build-staging'
+            }
+        }
+        stage('Start Staging') {
+            steps {
+                sh 'make start-staging'
+                sh 'docker exec --user=root environment3-laravel service supervisor stop'
+                sh 'docker exec --user=root environment3-laravel service supervisor start'
+            }
+        }
+    }
+}

@@ -26,62 +26,69 @@ services:
       build:
         context: .
         args:
-          BUILD_ARGUMENT_ENV: staging
+          BUILD_ARGUMENT_ENV: dev
           HOST_UID: ${HOST_UID}
           HOST_GID: ${HOST_GID}
-          XDEBUG_CONFIG: ${XDEBUG_CONFIG}
         dockerfile: ./Dockerfile
       container_name: ${COMPOSE_PROJECT_NAME}-laravel
-      volumes:
-        - ./:/var/www/html:cached
-      depends_on:
-        - mysql
-        #- mail
+      restart: always
+      #depends_on:
+      #  - mysql
       networks:
         - laravel
+
+    janus:
+      image: 'sucwangsr/janus-webrtc-gateway-docker:1.2.0-slim'
+      build:
+        context: ./docker/
+        dockerfile: ./janus/Dockerfile
+      container_name: janus
+      command: ["/usr/local/bin/janus", "-F", "/usr/local/etc/janus"] # only start janus 
+      network_mode: "host"
+      restart: always
+      #ports:
+      #  - "8188:8188"
+      #  - "8088:8088"
+      #  - "8089:8089"
+      #  - "8889:8889"
+      #  - "8000:8000"
+      #  - "7088:7088"
+      #  - "7089:7089"
+      volumes:
+        - "./docker/janus/conf/janus.transport.http.jcfg:/usr/local/etc/janus/janus.transport.http.jcfg"  # open adminapi config
+        - "./docker/janus/conf/janus.jcfg:/usr/local/etc/janus/janus.jcfg"
+        - "./docker/janus/conf/janus.eventhandler.sampleevh.jcfg:/usr/local/etc/janus/janus.eventhandler.sampleevh.jcfg"
 
     ### Cron tasks
-    supervisord:
-      <<: *laravel-template
-      container_name: ${COMPOSE_PROJECT_NAME}-supervisord
-      expose: []
-      command: ["/usr/bin/supervisord"]
+    #supervisord:
+    #  <<: *laravel-template
+    #  container_name: ${COMPOSE_PROJECT_NAME}-supervisord
+    #  expose: []
+    #  command: ["/usr/bin/supervisord"]
 
-    mysql:
-      image: mysql:${MYSQL_VERSION}
-      platform: linux/x86_64
-      container_name: ${COMPOSE_PROJECT_NAME}-mysql
-      command: --innodb-use-native-aio=${INNODB_USE_NATIVE_AIO:-1} --sql_mode=${SQL_MODE:-"ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"}
-      environment:
-        MYSQL_ROOT_PASSWORD: secret
-        MYSQL_DATABASE: laravel
-      ports:
-        - "33061:3306"
-      volumes:
-       - ./storage/mysql-data:/var/lib/mysql:delegated
-       - ./docker/dev/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
-      networks:
-        - laravel
-        
-    redis:
-        image: redis:6-alpine
-        container_name: redis
-        ports:
-          - "6380:6379"
-        volumes:
-          - cache_data:/data
-        networks:
-          - laravel
-
-    #mail:
-    #  image: axllent/mailpit:latest
-    #  container_name: ${COMPOSE_PROJECT_NAME}-mail
+    #mysql:
+    #  image: mysql:${MYSQL_VERSION}
+    #  platform: linux/x86_64
+    #  container_name: ${COMPOSE_PROJECT_NAME}-mysql
     #  restart: always
-    #  ports:
-    #    - "8025:8025"
-    #    - "1025:1025"
+    #  command: --innodb-use-native-aio=${INNODB_USE_NATIVE_AIO:-1} --sql_mode=${SQL_MODE:-"ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"}
+    #  environment:
+    #    MYSQL_ROOT_PASSWORD: secret
+    #    MYSQL_DATABASE: laravel
+    #  volumes:
+    #    - ./storage/mysql-data:/var/lib/mysql:delegated
     #  networks:
     #    - laravel
+
+    redis:
+      image: redis:6-alpine
+      container_name: redis
+      ports:
+        - "6380:6379"
+      volumes:
+        - cache_data:/data
+      networks:
+        - laravel
 
 #Volumes
 volumes:

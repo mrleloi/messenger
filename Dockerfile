@@ -72,12 +72,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 #RUN chmod +x /usr/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
-# add supervisor
-RUN mkdir -p /var/log/supervisor
-COPY --chown=root:root ./docker/general/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY --chown=root:crontab ./docker/general/cron /var/spool/cron/crontabs/root
-RUN chmod 0600 /var/spool/cron/crontabs/root
-
 # set working directory
 WORKDIR $APP_HOME
 
@@ -86,6 +80,15 @@ USER ${USERNAME}
 # copy source files and config file
 COPY --chown=${USERNAME}:${USERNAME} . $APP_HOME/
 COPY --chown=${USERNAME}:${USERNAME} .env.$ENV $APP_HOME/.env
+
+# add supervisor
+#USER root
+RUN mkdir -p /var/log/supervisor
+COPY --chown=root:root ./docker/general/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY --chown=root:crontab ./docker/general/cron /var/spool/cron/crontabs/root
+#RUN chmod 777 /var/spool/cron/crontabs
+#RUN chmod 777 /var/log/supervisor
+#USER ${USERNAME}
 
 # install all PHP dependencies
 RUN if [ "$BUILD_ARGUMENT_ENV" = "dev" ] || [ "$BUILD_ARGUMENT_ENV" = "test" ]; then COMPOSER_MEMORY_LIMIT=-1 composer update --optimize-autoloader --no-interaction --no-progress; \
