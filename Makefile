@@ -1,4 +1,4 @@
-export COMPOSE_PROJECT_NAME=environment3
+export COMPOSE_PROJECT_NAME=baity-dev
 export WEB_PORT_HTTP=81
 export WEB_PORT_SSL=444
 export XDEBUG_CONFIG=main

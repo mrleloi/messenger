@@ -1,7 +1,7 @@
 FROM php:8.1-fpm
 
 # set main params
-ARG BUILD_ARGUMENT_ENV=staging
+ARG BUILD_ARGUMENT_ENV=dev
 ENV ENV=$BUILD_ARGUMENT_ENV
 ENV APP_HOME /var/www/html
 ARG HOST_UID=1000
